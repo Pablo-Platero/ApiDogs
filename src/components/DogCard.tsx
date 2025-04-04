@@ -1,15 +1,43 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import React from 'react';
-import { Character } from '../types/character';
+import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+} from "react-native";
+import { Hoverable } from "react-native-web-hover";
+import { Character } from "../types/character";
 
-const DogCard = ({ dog, navigation }: { dog: Character; navigation: any }) => {
+const DogCard = ({
+  dog,
+  navigation,
+}: {
+  dog: Character;
+  navigation: any;
+}) => {
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('Details', { dog })}>
-      <View style={styles.card}>
-        {dog.image?.url && <Image source={{ uri: dog.image.url }} style={styles.image} />}
-        <Text style={styles.name}>{dog.name}</Text>
-      </View>
-    </TouchableOpacity>
+    <Hoverable>
+      {({ hovered }) => (
+        <TouchableOpacity onPress={() => navigation.navigate("Details", { dog })}>
+          <View
+            style={[
+              styles.card,
+              hovered && styles.cardHover,
+              Platform.OS === "web"
+                ? ({ transition: "all 0.3s ease-in-out" } as any) // 👈 truco TypeScript
+                : {},
+            ]}
+          >
+            {dog.image?.url && (
+              <Image source={{ uri: dog.image.url }} style={styles.image} />
+            )}
+            <Text style={styles.name}>{dog.name}</Text>
+          </View>
+        </TouchableOpacity>
+      )}
+    </Hoverable>
   );
 };
 
@@ -27,6 +55,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
+  },
+  cardHover: {
+    backgroundColor: "#f5f5f5",
+    transform: [{ scale: 1.03 }],
   },
   image: {
     width: 150,
